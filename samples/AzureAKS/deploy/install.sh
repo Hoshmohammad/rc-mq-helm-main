@@ -23,4 +23,4 @@ export APP_CERT=$(cat ../../genericresources/createcerts/application.crt | base6
 kubectl config set-context --current --namespace=$TARGET_NAMESPACE
 kubectl apply -f mtlsqm.yaml
 
-helm install qm1 ../../../charts/ibm-mq -f secureapp_nativeha.yaml
+helm install qm2 ../../../charts/ibm-mq -f secureapp_nativeha.yaml
