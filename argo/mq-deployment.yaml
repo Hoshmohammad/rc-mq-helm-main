@@ -1,7 +1,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: qm1
+  name: QM2
   namespace: argocd
 
 spec:
@@ -10,9 +10,9 @@ spec:
   source:
     repoURL: https://github.com/Hoshmohammad/rc-mq-helm-main.git
     targetRevision: HEAD
-    path: charts/ibm-mq
+    path: rc-mq-helm-main
     helm:
-      releaseName: qm1
+      releaseName: QM2
       valueFiles:
         - samples/AzureAKSFreeTier/deploy/secureapp.yaml
 
