@@ -1,0 +1,3 @@
+queueManager:
+  name: secureapphelm   # <-- change this to qm1, qm2, etc.
+replicaCount: 3
