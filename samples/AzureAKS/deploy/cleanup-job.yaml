@@ -1,0 +1,19 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: mq-cleanup
+  annotations:
+    argocd.argoproj.io/hook: PreSync
+spec:
+  template:
+    spec:
+      containers:
+      - name: cleanup
+        image: alpine
+        command: ["/bin/sh","-c"]
+        args:
+          - |
+            echo "Running cleanup"
+            cd /repo/samples/AzureAKS/deploy
+            ./cleanup
+      restartPolicy: Never
