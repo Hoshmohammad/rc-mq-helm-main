@@ -1,0 +1,27 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: ibm-mq-nativeha
+  namespace: argocd
+
+spec:
+  project: default
+
+  source:
+    repoURL: https://github.com/Hoshmohammad/rc-mq-helm-main.git
+    targetRevision: HEAD
+    path: charts/ibm-mq
+
+    helm:
+      releaseName: secureapphelm
+      valueFiles:
+        - samples/AzureAKS/deploy/secureapp_nativeha.yaml
+
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: default
+
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
