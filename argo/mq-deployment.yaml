@@ -10,7 +10,7 @@ spec:
   source:
     repoURL: https://github.com/Hoshmohammad/rc-mq-helm-main.git
     targetRevision: HEAD
-    path: rc-mq-helm-main
+    path: rc-mq-helm-main/
     helm:
       releaseName: qm1
       valueFiles:
