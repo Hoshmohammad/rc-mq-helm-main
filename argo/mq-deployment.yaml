@@ -1,7 +1,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: QM2
+  name: qm1
   namespace: argocd
 
 spec:
@@ -12,7 +12,7 @@ spec:
     targetRevision: HEAD
     path: rc-mq-helm-main
     helm:
-      releaseName: QM2
+      releaseName: qm1
       valueFiles:
         - samples/AzureAKSFreeTier/deploy/secureapp.yaml
 
