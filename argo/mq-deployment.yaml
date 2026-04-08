@@ -2,7 +2,7 @@ apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
   name: qm1
-  namespace: default
+  namespace: argocd
 
 spec:
   project: default
@@ -14,7 +14,7 @@ spec:
     helm:
       releaseName: qm1
       valueFiles:
-        - samples/AzureAKS/deploy/secureapp.yaml
+        - samples/AzureAKSFreeTier/deploy/secureapp.yaml
 
   destination:
     server: https://kubernetes.default.svc
