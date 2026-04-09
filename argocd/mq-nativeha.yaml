@@ -13,7 +13,7 @@ spec:
     path: charts/ibm-mq
 
     helm:
-      releaseName: secureapphelm
+      releaseName: qm1
       valueFiles:
         - samples/AzureAKS/deploy/secureapp_nativeha.yaml
 
