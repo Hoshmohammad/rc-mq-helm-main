@@ -1,7 +1,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: mq-nativeha
+  name: qm1
   namespace: argocd
 
 spec:
@@ -13,9 +13,9 @@ spec:
     path: charts/ibm-mq
 
     helm:
-      releaseName: qm2
+      releaseName: qm1
       valueFiles:
-        - argocd/secureapp_nativeha.yaml
+        - ../../samples/AzureAKS/deploy/secureapp_nativeha.yaml
 
   destination:
     server: https://kubernetes.default.svc
