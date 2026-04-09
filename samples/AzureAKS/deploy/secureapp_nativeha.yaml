@@ -16,13 +16,13 @@ queueManager:
   nativeha:
     enable: true
     tls:
-      secretName: qm1
+      secretName: helmsecure
   mqscConfigMaps:
-    - name: qm1
+    - name: helmsecure
       items:
         - mq.mqsc
   qminiConfigMaps:
-    - name: qm1
+    - name: helmsecure
       items:
         - mq.ini
 persistence:
@@ -36,14 +36,14 @@ pki:
   keys:
     - name: default
       secret:
-        secretName: qm1
+        secretName: helmsecure
         items:
           - tls.key
           - tls.crt
   trust:
     - name: default
       secret:
-        secretName: qm1
+        secretName: helmsecure
         items:
           - app.crt
 metadata:
