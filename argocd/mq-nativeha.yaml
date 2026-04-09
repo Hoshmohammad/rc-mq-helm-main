@@ -13,9 +13,9 @@ spec:
     path: charts/ibm-mq
 
     helm:
-      releaseName: qm1
+      releaseName: qm2
       valueFiles:
-        - samples/AzureAKS/deploy/secureapp_nativeha.yaml
+        - argocd/secureapp_nativeha.yaml
 
   destination:
     server: https://kubernetes.default.svc
