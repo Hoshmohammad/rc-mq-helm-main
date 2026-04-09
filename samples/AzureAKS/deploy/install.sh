@@ -18,9 +18,8 @@ export QM_KEY=$(cat ../../genericresources/createcerts/server.key | base64 | tr 
 export QM_CERT=$(cat ../../genericresources/createcerts/server.crt | base64 | tr -d '\n')
 export APP_CERT=$(cat ../../genericresources/createcerts/application.crt | base64 | tr -d '\n')
 
-( echo "cat <<EOF" ; cat mtlsqm.yaml_template ; echo EOF ) | sh > mtlsqm.yaml
+( echo "cat1 <<EOF" ; cat mtlsqm.yaml_template ; echo EOF ) | sh > mtlsqm.yaml
 
 kubectl config set-context --current --namespace=$TARGET_NAMESPACE
 kubectl apply -f mtlsqm.yaml
-
 helm install secureapphelm ../../../charts/ibm-mq -f secureapp_nativeha.yaml
