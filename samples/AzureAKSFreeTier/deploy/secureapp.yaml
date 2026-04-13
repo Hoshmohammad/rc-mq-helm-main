@@ -32,7 +32,7 @@ pki:
   keys:
     - name: default
       secret:
-        secretName: helmsecure
+        secretName: mq-tls-secret
         items:
           - tls.key
           - tls.crt

@@ -69,7 +69,7 @@ persistence:
     # enabled is whether to use this Persistent Volumes or not
     enable: true
     # name sets part of the name for this Persistent Volume Claim
-    name: "qm"
+    name: "qm1"
     ## size is the minimum size of the Persistent Volume
     size: 2Gi
     ## storageClass to use for this PVCs

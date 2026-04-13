@@ -1,0 +1,29 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: ibm-mq-app
+  namespace: argocd
+spec:
+  project: default
+
+  source:
+    repoURL: https://github.com/Hoshmohammad/rc-mq-helm-main.git   # 🔁 replace with your repo
+    targetRevision: HEAD
+    path: charts/ibm-mq
+
+    helm:
+      valueFiles:
+        - values.yaml
+        - secureapp.yaml   # your custom config
+
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: mq
+
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+
+    syncOptions:
+      - CreateNamespace=true

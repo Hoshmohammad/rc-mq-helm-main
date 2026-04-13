@@ -1,0 +1,11 @@
+license: accept
+
+queueManager:
+  name: QM1
+
+persistence:
+  enabled: true
+  size: 10Gi
+
+web:
+  enabled: true
