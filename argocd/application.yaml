@@ -1,0 +1,29 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: mq-from-your-repo
+  namespace: argocd
+
+spec:
+  project: default
+
+  source:
+    repoURL: https://github.com/Hoshmohammad/rc-mq-helm-main.git
+    targetRevision: main
+    path: charts/ibm-mq   # ✅ correct for your repo
+
+    helm:
+      valueFiles:
+        - ../../values.yaml   # 🔥 IMPORTANT
+
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: mq
+
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+
+    syncOptions:
+      - CreateNamespace=true
