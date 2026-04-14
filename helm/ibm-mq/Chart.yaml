@@ -1,0 +1,17 @@
+apiVersion: v2
+name: ibm-mq
+description: A Helm chart for deploying IBM MQ as a container on Kubernetes
+type: application
+version: 1.0.0
+appVersion: "9.4.0"
+keywords:
+  - ibm
+  - mq
+  - messaging
+  - queue
+home: https://www.ibm.com/products/mq
+sources:
+  - https://github.com/ibm-messaging/mq-container
+maintainers:
+  - name: Onbe Infrastructure
+    email: infrastructure@onbe.com

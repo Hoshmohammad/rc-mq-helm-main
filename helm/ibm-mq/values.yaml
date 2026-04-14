@@ -1,0 +1,99 @@
+replicaCount: 3  # Native HA: 3 replicas (1 active + 2 standby)
+
+image:
+  # Override repository via --set image.repository=<ACR_LOGIN_SERVER>/ibm-messaging/mq
+  # AKS clusters are assumed to have ACR pull access via managed identity.
+  repository: ibm-messaging/mq
+  tag: "9.4.0"
+  pullPolicy: IfNotPresent
+
+imagePullSecrets: []
+
+nameOverride: ""
+fullnameOverride: ""
+
+serviceAccount:
+  create: true
+  annotations: {}
+  name: ""
+
+podAnnotations: {}
+
+podSecurityContext: {}
+
+securityContext:
+  runAsNonRoot: true
+  runAsUser: 1001
+
+service:
+  type: ClusterIP
+  ports:
+    mqListener: 1414
+    webConsole: 9443
+    metrics: 9157
+    replication: 9414
+
+ingress:
+  enabled: false
+  className: ""
+  annotations: {}
+  hosts:
+    - host: ibm-mq.local
+      paths:
+        - path: /
+          pathType: Prefix
+  tls: []
+
+resources:
+  limits:
+    cpu: 500m
+    memory: 512Mi
+  requests:
+    cpu: 250m
+    memory: 256Mi
+
+persistence:
+  enabled: true
+  storageClass: "managed-premium"
+  accessMode: ReadWriteOnce
+  size: 200Gi
+
+mq:
+  license: accept
+  qmgrName: QM1
+  nativeHA: "true"
+  adminPassword: ""
+  appPassword: ""
+
+mqsc: |
+  DEFINE QLOCAL('DEV.QUEUE.1') REPLACE DEFPSIST(YES)
+  DEFINE QLOCAL('DEV.QUEUE.2') REPLACE DEFPSIST(YES)
+  DEFINE QLOCAL('DEV.DEAD.LETTER.QUEUE') REPLACE DEFPSIST(YES)
+  DEFINE CHANNEL('DEV.APP.SVRCONN') CHLTYPE(SVRCONN) REPLACE
+  SET CHLAUTH('DEV.APP.SVRCONN') TYPE(BLOCKUSER) USERLIST('nobody')
+  SET CHLAUTH('*') TYPE(ADDRESSMAP) ADDRESS('*') USERSRC(NOACCESS)
+  SET CHLAUTH('DEV.APP.SVRCONN') TYPE(ADDRESSMAP) ADDRESS('*') USERSRC(CHANNEL) CHCKCLNT(REQUIRED)
+  ALTER AUTHINFO(SYSTEM.DEFAULT.AUTHINFO.IDPWOS) AUTHTYPE(IDPWOS) ADOPTCTX(YES)
+  REFRESH SECURITY TYPE(CONNAUTH)
+  DEFINE LISTENER('DEV.LISTENER.TCP') TRPTYPE(TCP) PORT(1414) REPLACE
+  START LISTENER('DEV.LISTENER.TCP')
+
+ini: |
+  [ServiceComponent]
+  Service=QueueManager
+  Name=QM1
+  [Channels]
+  MaxChannels=100
+  MaxActiveChannels=100
+
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 3
+  targetCPUUtilizationPercentage: 80
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}

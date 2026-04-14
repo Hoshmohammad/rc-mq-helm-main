@@ -1,0 +1,117 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ include "ibm-mq.fullname" . }}
+  labels:
+    {{- include "ibm-mq.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "ibm-mq.selectorLabels" . | nindent 6 }}
+  serviceName: {{ include "ibm-mq.fullname" . }}-headless
+  template:
+    metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "ibm-mq.selectorLabels" . | nindent 8 }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "ibm-mq.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      containers:
+        - name: {{ .Chart.Name }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          env:
+            - name: LICENSE
+              value: {{ .Values.mq.license | quote }}
+            - name: MQ_QMGR_NAME
+              value: {{ .Values.mq.qmgrName | quote }}
+            - name: MQ_NATIVE_HA
+              value: {{ .Values.mq.nativeHA | quote }}
+            - name: MQ_ADMIN_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "ibm-mq.fullname" . }}-credentials
+                  key: adminPassword
+            - name: MQ_APP_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "ibm-mq.fullname" . }}-credentials
+                  key: appPassword
+          ports:
+            - name: mq-listener
+              containerPort: {{ .Values.service.ports.mqListener }}
+              protocol: TCP
+            - name: web-console
+              containerPort: {{ .Values.service.ports.webConsole }}
+              protocol: TCP
+            - name: metrics
+              containerPort: {{ .Values.service.ports.metrics }}
+              protocol: TCP
+            - name: replication
+              containerPort: {{ .Values.service.ports.replication }}
+              protocol: TCP
+          livenessProbe:
+            tcpSocket:
+              port: mq-listener
+            initialDelaySeconds: 60
+            periodSeconds: 30
+            failureThreshold: 3
+            successThreshold: 1
+            timeoutSeconds: 5
+          readinessProbe:
+            tcpSocket:
+              port: mq-listener
+            initialDelaySeconds: 30
+            periodSeconds: 15
+            failureThreshold: 3
+            successThreshold: 1
+            timeoutSeconds: 5
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+          volumeMounts:
+            - name: mqm-config
+              mountPath: /etc/mqm/
+            {{- if .Values.persistence.enabled }}
+            - name: mqm-data
+              mountPath: /mnt/mqm
+            {{- end }}
+      volumes:
+        - name: mqm-config
+          configMap:
+            name: {{ include "ibm-mq.fullname" . }}-config
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+  {{- if .Values.persistence.enabled }}
+  volumeClaimTemplates:
+    - metadata:
+        name: mqm-data
+      spec:
+        accessModes:
+          - {{ .Values.persistence.accessMode }}
+        storageClassName: {{ .Values.persistence.storageClass | quote }}
+        resources:
+          requests:
+            storage: {{ .Values.persistence.size }}
+  {{- end }}
