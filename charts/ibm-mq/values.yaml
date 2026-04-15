@@ -13,7 +13,7 @@
 # limitations under the License.
 
 # license must be set to "accept" to accept the terms of the IBM license
-license: "not accepted"
+license: "accept"
 
 image:
   # repository is the container repository to use
@@ -36,7 +36,10 @@ credentials:
 
 # metadata allows setting of additional labels and annottations to be added to all resources. Set on helm install using --set metadata.labels.KEY=VALUE,metadata.labels.=VALUE,...
 metadata:
-  labels: {}
+  labels:
+    application: ibm-mq
+    environment: qa
+    component: messaging
   annotations: {}
 
 # persistence section specifies persistence settings which apply to the whole chart
@@ -45,24 +48,24 @@ persistence:
   # dataPVC section specifies settings for the main Persistent Volume Claim, which is used for data in /mnt/mqm-data
   dataPVC:
     # enabled is whether to use this Persistent Volumes or not
-    enable: false
+    enable: true
     # name sets part of the name for this Persistent Volume Claim
     name: "data"
     ## size is the minimum size of the Persistent Volume
-    size: 2Gi
+    size: 30Gi
     ## storageClass to use for this PVCs
-    storageClassName: ""
+    storageClassName: "managed"
 
   # logPVC section specifies settings for the main Persistent Volume Claim, which is used for log in /mnt/mqm-log
   logPVC:
     # enabled is whether to use this Persistent Volumes or not
-    enable: false
+    enable: true
     # name sets part of the name for this Persistent Volume Claim
     name: "log"
     ## size is the minimum size of the Persistent Volume
-    size: 2Gi
+    size: 20Gi
     ## storageClass to use for this PVCs
-    storageClassName: ""
+    storageClassName: "managed"
 
   # qmPVC section specifies settings for the main Persistent Volume Claim, which is used for data in /mnt/mqm
   qmPVC:
@@ -71,43 +74,46 @@ persistence:
     # name sets part of the name for this Persistent Volume Claim
     name: "qm"
     ## size is the minimum size of the Persistent Volume
-    size: 2Gi
+    size: 10Gi
     ## storageClass to use for this PVCs
-    storageClassName: ""
+    storageClassName: "managed"
 
 
 resources:
   limits:
-    cpu: 500m
-    memory: 1024Mi
+    cpu: "4"
+    memory: 8Gi
   requests:
-    cpu: 100m
-    memory: 512Mi
+    cpu: "2"
+    memory: 4Gi
 
 security:
   # context section specifies additional security context settings for the pod
   context:
-    fsGroup:
+    fsGroup: 0
     supplementalGroups: []
     seccompProfile:
-      type:
+      type: 
   # initVolumeAsRoot specifies whether or not storage provider requires root permissions to initialize
   initVolumeAsRoot: false
-  runAsUser:
+  runAsUser: 
   readOnlyRootFilesystem: false
 
 # queueManager section specifies settings for the MQ Queue Manager
 queueManager:
   # name allows you to specify the name to use for the queue manager.  Defaults to the Helm release name.
-  name:
+  name: AKS_QA_MQ_HA
   # nativeha specifies whether to run in nativeha mode with an active and two following container instances
   nativeha:
-    enable: false
+    enable: true
   # multiinstance specifies whether to run in multiinstance mode with an active and one standby container instances
   multiinstance:
     enable: false
   # Allows MQSC snippets to be loaded from configMaps. These will be loaded into the running instance
-  mqscConfigMaps: []
+  mqscConfigMaps:
+    - name: mqsc-aksqamqha 
+      items:
+        - 1line_Q_MQ_WAN.mqsc
   # Allows MQSC snippets to be loaded from secrets. These will be loaded into the running instance
   mqscSecrets: []
   # Allows QM INI snippets to be loaded from configMaps. These will be loaded into the running instance
@@ -134,14 +140,14 @@ pki:
 # livenessProbe section specifies setting for the MQ liveness probe, which checks for a running Queue Manager
 livenessProbe:
   # initialDelaySeconds should be raised if your system cannot start the Queue Manager in 60 seconds
-  initialDelaySeconds:
+  initialDelaySeconds: 120
   periodSeconds: 10
   timeoutSeconds: 5
   failureThreshold: 3
 
 # readinessProbe section specifies setting for the MQ readiness probe, which checks when the MQ listener is running
 readinessProbe:
-  initialDelaySeconds:
+  initialDelaySeconds: 60
   periodSeconds: 5
   timeoutSeconds: 3
   failureThreshold: 1
@@ -151,7 +157,7 @@ startupProbe:
   timeoutSeconds: 5
   periodSeconds: 5
   successThreshold: 1
-  failureThreshold: 24
+  failureThreshold: 60
 
 # route section specified if any additional Kubernetes services or OpenShift Routes should be defined
 route:
@@ -164,10 +170,11 @@ route:
       mqtraffic: false
       hacrrtraffic: false
     loadBalancer:
-      webconsole: false
-      mqtraffic: false
+      webconsole: true
+      mqtraffic: true
       # Additional annotations to be added to the load balancer annotations
-      annotations: {}
+      annotations: 
+        service.beta.kubernetes.io/azure-load-balancer-internal: "true"
       loadBalancerSourceRanges: []
     ingress:
       webconsole: 
@@ -196,14 +203,34 @@ metrics:
 
 affinity:
   nodeAffinity:
-    matchExpressions: []
+    matchExpressions:
+      - key: agentpool
+        operator: In
+        values:
+          - mqpool01
 
-topologySpreadConstraints: {}  
+tolerations:
+  - key: "workload"
+    operator: "Equal"
+    value: "mq"
+    effect: "NoSchedule" 
+ 
 
-tolerations: []
+topologySpreadConstraints:
+  - maxSkew: 1
+    topologyKey: kubernetes.io/hostname
+    whenUnsatisfiable: DoNotSchedule
+    labelSelector:
+      matchLabels:
+        app.kubernetes.io/name: ibm-mq
+
+
+metadata:
+  annotations:
+    oneagent.dynatrace.com/inject: "false"
 
 web: 
-  enabled:
+  enabled: true
   manualConfig:
     configMap:
       name:
