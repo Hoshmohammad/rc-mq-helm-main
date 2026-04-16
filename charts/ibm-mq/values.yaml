@@ -23,7 +23,7 @@ image:
   # pullSecret is the secret to use when pulling the image from a private registry
   pullSecret:
   # pullPolicy is either IfNotPresent or Always (https://kubernetes.io/docs/concepts/containers/images/)
-  pullPolicy: IfNotPresent
+  pullPolicy: Always
   # disableDefaultPullSecret to use when pulling the image from a private registry and the ibm-entitlement-key is not required
   disableDefaultPullSecret: false
 
