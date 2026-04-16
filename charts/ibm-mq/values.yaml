@@ -13,7 +13,7 @@
 # limitations under the License.
 
 # license must be set to "accept" to accept the terms of the IBM license
-license: "accept"
+license: "not accepted"
 
 image:
   # repository is the container repository to use
