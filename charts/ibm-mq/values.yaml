@@ -207,7 +207,7 @@ affinity:
       - key: agentpool
         operator: In
         values:
-          - mqpool01
+          - nodepool1
 
 tolerations:
   - key: "workload"
