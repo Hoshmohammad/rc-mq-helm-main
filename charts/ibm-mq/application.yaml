@@ -1,0 +1,26 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+name: ibm-mq-app
+namespace: argocd   # Argo CD is usually installed here
+spec:
+project: default
+
+source:
+repoURL: https://github.com/Hoshmohammad/rc-mq-helm-main.git
+targetRevision: main
+path: charts/ibm-mq   # path to your chart
+helm:
+valueFiles:
+- values.yaml     # uses values.yaml inside chart
+
+destination:
+server: https://kubernetes.default.svc
+namespace: ibmmqnativeha-qa
+
+syncPolicy:
+automated:
+prune: true
+selfHeal: true
+syncOptions:
+- CreateNamespace=true
