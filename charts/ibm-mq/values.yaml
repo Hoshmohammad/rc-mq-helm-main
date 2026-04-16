@@ -52,7 +52,7 @@ persistence:
     # name sets part of the name for this Persistent Volume Claim
     name: "data"
     ## size is the minimum size of the Persistent Volume
-    size: 30Gi
+    size: 4Gi
     ## storageClass to use for this PVCs
     storageClassName: "managed"
 
@@ -63,7 +63,7 @@ persistence:
     # name sets part of the name for this Persistent Volume Claim
     name: "log"
     ## size is the minimum size of the Persistent Volume
-    size: 20Gi
+    size: 2Gi
     ## storageClass to use for this PVCs
     storageClassName: "managed"
 
@@ -74,7 +74,7 @@ persistence:
     # name sets part of the name for this Persistent Volume Claim
     name: "qm"
     ## size is the minimum size of the Persistent Volume
-    size: 10Gi
+    size: 2Gi
     ## storageClass to use for this PVCs
     storageClassName: "managed"
 
@@ -82,10 +82,10 @@ persistence:
 resources:
   limits:
     cpu: "4"
-    memory: 8Gi
+    memory: 4Gi
   requests:
     cpu: "2"
-    memory: 4Gi
+    memory: 2Gi
 
 security:
   # context section specifies additional security context settings for the pod
@@ -110,10 +110,7 @@ queueManager:
   multiinstance:
     enable: false
   # Allows MQSC snippets to be loaded from configMaps. These will be loaded into the running instance
-  mqscConfigMaps:
-    - name: mqsc-aksqamqha 
-      items:
-        - QM1_backup.mqsc
+  mqscConfigMaps: []
   # Allows MQSC snippets to be loaded from secrets. These will be loaded into the running instance
   mqscSecrets: []
   # Allows QM INI snippets to be loaded from configMaps. These will be loaded into the running instance
@@ -200,21 +197,6 @@ trace:
 # metrics section specifies settings for generating queue manager metrics
 metrics:
   enabled: true
-
-affinity:
-  nodeAffinity:
-    matchExpressions:
-      - key: agentpool
-        operator: In
-        values:
-          - nodepool1
-
-tolerations:
-  - key: "workload"
-    operator: "Equal"
-    value: "mq"
-    effect: "NoSchedule" 
- 
 
 topologySpreadConstraints:
   - maxSkew: 1
