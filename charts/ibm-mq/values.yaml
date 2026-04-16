@@ -113,7 +113,7 @@ queueManager:
   mqscConfigMaps:
     - name: mqsc-aksqamqha 
       items:
-        - 1line_Q_MQ_WAN.mqsc
+        - QM1_backup.mqsc
   # Allows MQSC snippets to be loaded from secrets. These will be loaded into the running instance
   mqscSecrets: []
   # Allows QM INI snippets to be loaded from configMaps. These will be loaded into the running instance
