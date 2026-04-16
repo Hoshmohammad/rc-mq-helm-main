@@ -105,7 +105,7 @@ queueManager:
   name: AKS_QA_MQ_HA
   # nativeha specifies whether to run in nativeha mode with an active and two following container instances
   nativeha:
-    enable: true
+    enable: false
   # multiinstance specifies whether to run in multiinstance mode with an active and one standby container instances
   multiinstance:
     enable: false
