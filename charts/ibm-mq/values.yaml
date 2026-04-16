@@ -198,6 +198,21 @@ trace:
 metrics:
   enabled: true
 
+affinity:
+  nodeAffinity:
+    matchExpressions:
+      - key: agentpool
+        operator: In
+        values:
+          - nodepool1
+
+tolerations:
+  - key: "workload"
+    operator: "Equal"
+    value: "mq"
+    effect: "NoSchedule" 
+ 
+
 topologySpreadConstraints:
   - maxSkew: 1
     topologyKey: kubernetes.io/hostname
