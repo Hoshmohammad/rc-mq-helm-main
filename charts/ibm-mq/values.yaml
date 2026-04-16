@@ -13,7 +13,7 @@
 # limitations under the License.
 
 # license must be set to "accept" to accept the terms of the IBM license
-license: "not accepted"
+license: "accept"
 
 image:
   # repository is the container repository to use
@@ -23,7 +23,7 @@ image:
   # pullSecret is the secret to use when pulling the image from a private registry
   pullSecret:
   # pullPolicy is either IfNotPresent or Always (https://kubernetes.io/docs/concepts/containers/images/)
-  pullPolicy: Always
+  pullPolicy: IfNotPresent
   # disableDefaultPullSecret to use when pulling the image from a private registry and the ibm-entitlement-key is not required
   disableDefaultPullSecret: false
 
