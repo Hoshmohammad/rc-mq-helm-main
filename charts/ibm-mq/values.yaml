@@ -102,7 +102,7 @@ security:
 # queueManager section specifies settings for the MQ Queue Manager
 queueManager:
   # name allows you to specify the name to use for the queue manager.  Defaults to the Helm release name.
-  name: AKS_QA_MQ_HA
+  name: AKS_QM1
   # nativeha specifies whether to run in nativeha mode with an active and two following container instances
   nativeha:
     enable: true
