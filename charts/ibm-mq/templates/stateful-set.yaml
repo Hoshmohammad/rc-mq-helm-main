@@ -50,10 +50,11 @@ spec:
     type: {{ .Values.queueManager.updateStrategy }}
   {{- end }}
   template:
-    metadata:
-      annotations:
+  metadata:
+    annotations:
+      checksum/config: {{ .Values | toYaml | sha256sum }}
       {{- with .Values.metadata.annotations }}
-        {{- toYaml . | nindent 8 }}
+      {{ toYaml . | nindent 6 }}
       {{- end }}
       labels:
       {{- with .Values.metadata.labels }}
